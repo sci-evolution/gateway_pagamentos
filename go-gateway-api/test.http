@@ -1,0 +1,50 @@
+### Variáveis globais
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+
+### Account
+@accountApiKey = {{createAccount.response.body.api_key}}
+
+### Criar uma nova conta
+# @name createAccount
+POST {{baseUrl}}/accounts
+Content-Type: {{contentType}}
+
+{
+    "name": "John Doe",
+    "email": "john@example_1.com"
+}
+
+### Buscar conta por API Key
+GET {{baseUrl}}/accounts
+X-API-Key: {{accountApiKey}}
+
+
+### Invoice
+@invoiceId = {{createInvoice.response.body.id}}
+
+### Criar uma nova fatura
+# @name createInvoice
+POST {{baseUrl}}/invoices
+X-API-Key: {{accountApiKey}}
+Content-Type: {{contentType}}
+
+{
+    "amount": 10000.01,
+    "description": "Bandeja de ovos 5",
+    "payment_type": "credit_card",
+    "card_number": "1234567890123456",
+    "cvv": "123",
+    "expiry_month": 12,
+    "expiry_year": 2025,
+    "card_holder_name": "John Doe"
+}
+
+### Buscar fatura pelo ID da fatura
+GET {{baseUrl}}/invoices/{{invoiceId}}
+X-API-Key: {{accountApiKey}}
+
+### Buscar faturas pelo ID da conta
+GET {{baseUrl}}/invoices
+X-API-Key: {{accountApiKey}}
