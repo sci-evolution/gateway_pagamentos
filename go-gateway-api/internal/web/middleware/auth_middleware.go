@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/wellington-evolution/go-gateway-api/internal/domain"
-	"github.com/wellington-evolution/go-gateway-api/internal/service"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/domain"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/service"
 )
 
 type AuthMiddleware struct {

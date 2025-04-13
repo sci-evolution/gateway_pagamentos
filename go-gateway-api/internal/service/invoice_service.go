@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/wellington-evolution/go-gateway-api/internal/domain"
-	"github.com/wellington-evolution/go-gateway-api/internal/dto"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/domain"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/dto"
 )
 
 type InvoiceService struct {

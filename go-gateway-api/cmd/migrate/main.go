@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/wellington-evolution/go-gateway-api/internal/database"
+	_ "github.com/lib/pq" // driver PostgreSQL
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/database"
 )
 
 func main() {

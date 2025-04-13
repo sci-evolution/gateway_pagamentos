@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/wellington-evolution/go-gateway-api/internal/dto"
-	"github.com/wellington-evolution/go-gateway-api/internal/service"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/dto"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/service"
 )
 
 type AccountHandler struct {

@@ -8,9 +8,9 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq" // driver PostgreSQL
-	"github.com/wellington-evolution/go-gateway-api/internal/repository"
-	"github.com/wellington-evolution/go-gateway-api/internal/service"
-	"github.com/wellington-evolution/go-gateway-api/internal/web/server"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/repository"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/service"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/web/server"
 )
 
 func main() {

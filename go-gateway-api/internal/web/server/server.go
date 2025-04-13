@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/wellington-evolution/go-gateway-api/internal/service"
-	"github.com/wellington-evolution/go-gateway-api/internal/web/handlers"
-	"github.com/wellington-evolution/go-gateway-api/internal/web/middleware"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/service"
+	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/web/handlers"
+	authMiddleware "github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/web/middleware"
 )
 
 type Server struct {
@@ -27,7 +27,7 @@ func NewServer(accountService *service.AccountService, invoiceService *service.I
 }
 
 func (s *Server) ConfigureRoutes() {
-	authMiddleware := middleware.NewAuthMiddleware(s.accountService)
+	authMiddleware := authMiddleware.NewAuthMiddleware(s.accountService)
 	accountHandler := handlers.NewAccountHandler(s.accountService)
 	invoiceHandler := handlers.NewInvoiceHandler(s.invoiceService)
 
