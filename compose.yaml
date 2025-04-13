@@ -32,8 +32,6 @@ services:
     restart: unless-stopped
     volumes:
       - gateway-db-data:/var/lib/postgresql/data
-    env_file:
-      - .env.db
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
