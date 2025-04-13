@@ -23,15 +23,15 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      db:
+      gateway-db:
         condition: service_healthy
     command: sh -c "/bin/migrate && /bin/server"
-  db:
+  gateway-db:
     image: ${DB_IMAGE}
     container_name: "${DB_HOST}"
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - gateway-db-data:/var/lib/postgresql/data
     env_file:
       - .env.db
     environment:
@@ -46,4 +46,4 @@ services:
       timeout: 5s
       retries: 5
 volumes:
-  db-data:
+  gateway-db-data:
