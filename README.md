@@ -1,2 +1,2 @@
-# go-gateway-api
-Exercício prático do vídeo 1 da Imersão Fullcycle Gateway de Pagamento
+# gateway_pagamentos
+Exercício prático da Imersão Fullcycle 22 - Gateway de Pagamento
