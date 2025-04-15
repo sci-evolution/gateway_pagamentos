@@ -1,47 +1,50 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
-  gateway:
+  frontend:
     build:
-      context: ./go-gateway-api
-      target: final
+      context: ./next-frontend
+      dockerfile: Dockerfile.dev
     environment:
-      - HTTP_PORT
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - DB_SSLMODE
+      - NODE_ENV=${FRONTEND_NODE_ENV}
+      - PORT=${FRONTEND_HTTP_PORT}
     ports:
-      - 8080:8080
-    depends_on:
-      gateway-db:
-        condition: service_healthy
-    command: sh -c "/bin/migrate && /bin/server"
-  gateway-db:
-    image: ${DB_IMAGE}
-    container_name: "${DB_HOST}"
-    restart: unless-stopped
+      - 3000:3000
     volumes:
-      - gateway-db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    expose:
-      - 5432
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-volumes:
-  gateway-db-data:
+      - ./next-frontend:/usr/src/app
+    command: sleep infinity
+#   gateway:
+#     build:
+#       context: ./go-gateway-api
+#       target: final
+#     environment:
+#       - HTTP_PORT
+#       - DB_HOST
+#       - DB_PORT
+#       - DB_USER
+#       - DB_PASSWORD
+#       - DB_NAME
+#       - DB_SSLMODE
+#     ports:
+#       - 8080:8080
+#     depends_on:
+#       gateway-db:
+#         condition: service_healthy
+#     command: sh -c "/bin/migrate && /bin/server"
+#   gateway-db:
+#     image: ${DB_IMAGE}
+#     container_name: "${DB_HOST}"
+#     restart: unless-stopped
+#     volumes:
+#       - gateway-db-data:/var/lib/postgresql/data
+#     environment:
+#       POSTGRES_USER: ${DB_USER}
+#       POSTGRES_PASSWORD: ${DB_PASSWORD}
+#       POSTGRES_DB: ${DB_NAME}
+#     expose:
+#       - 5432
+#     healthcheck:
+#       test: [ "CMD", "pg_isready" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+# volumes:
+#   gateway-db-data:
