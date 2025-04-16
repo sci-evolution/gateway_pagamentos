@@ -11,40 +11,40 @@ services:
     volumes:
       - ./next-frontend:/usr/src/app
     command: sleep infinity
-#   gateway:
-#     build:
-#       context: ./go-gateway-api
-#       target: final
-#     environment:
-#       - HTTP_PORT
-#       - DB_HOST
-#       - DB_PORT
-#       - DB_USER
-#       - DB_PASSWORD
-#       - DB_NAME
-#       - DB_SSLMODE
-#     ports:
-#       - 8080:8080
-#     depends_on:
-#       gateway-db:
-#         condition: service_healthy
-#     command: sh -c "/bin/migrate && /bin/server"
-#   gateway-db:
-#     image: ${DB_IMAGE}
-#     container_name: "${DB_HOST}"
-#     restart: unless-stopped
-#     volumes:
-#       - gateway-db-data:/var/lib/postgresql/data
-#     environment:
-#       POSTGRES_USER: ${DB_USER}
-#       POSTGRES_PASSWORD: ${DB_PASSWORD}
-#       POSTGRES_DB: ${DB_NAME}
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   gateway-db-data:
+  gateway:
+    build:
+      context: ./go-gateway-api
+      target: final
+    environment:
+      - HTTP_PORT
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
+      - DB_SSLMODE
+    ports:
+      - 8080:8080
+    depends_on:
+      gateway-db:
+        condition: service_healthy
+    command: sh -c "/bin/migrate && /bin/server"
+  gateway-db:
+    image: ${DB_IMAGE}
+    container_name: "${DB_HOST}"
+    restart: unless-stopped
+    volumes:
+      - gateway-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  gateway-db-data:

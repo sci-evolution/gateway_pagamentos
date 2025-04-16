@@ -13,7 +13,7 @@ Content-Type: {{contentType}}
 
 {
     "name": "John Doe",
-    "email": "john@example_1.com"
+    "email": "john@example_3.com"
 }
 
 ### Buscar conta por API Key

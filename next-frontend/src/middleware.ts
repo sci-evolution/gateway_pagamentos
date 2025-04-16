@@ -1,0 +1,55 @@
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+// Rotas que devem ser protegidas (requer autenticação)
+const protectedRoutes = ['/invoices']
+
+// Rotas de autenticação (não redirecionar de volta para login)
+const authRoutes = ['/login']
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  const apiKey = request.cookies.get('apiKey')?.value
+  
+  // Verificar se a apiKey existe e não está vazia
+  const isAuthenticated = !!apiKey && apiKey.trim() !== ''
+  
+  // Verificar se a rota atual está na lista de rotas protegidas
+  const isProtectedRoute = protectedRoutes.some(route => 
+    pathname.startsWith(route) || pathname === route
+  )
+  
+  // Verificar se a rota atual é uma rota de autenticação
+  const isAuthRoute = authRoutes.some(route => 
+    pathname.startsWith(route) || pathname === route
+  )
+
+  // Se for uma rota protegida e não há apiKey, redireciona para login
+  if (isProtectedRoute && !isAuthenticated) {
+    const url = new URL('/login', request.url)
+    return NextResponse.redirect(url)
+  }
+  
+  // Se o usuário já está autenticado e tenta acessar uma rota de autenticação,
+  // redireciona para a página principal de faturas
+  if (isAuthRoute && isAuthenticated) {
+    const url = new URL('/invoices', request.url)
+    return NextResponse.redirect(url)
+  }
+
+  return NextResponse.next()
+}
+
+// Configurar o matcher para as rotas que o middleware deve ser executado
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public assets)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+} 
