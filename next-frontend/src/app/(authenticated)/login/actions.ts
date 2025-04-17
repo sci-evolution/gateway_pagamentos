@@ -31,36 +31,25 @@ export async function loginWithApiKey(formData: FormData): Promise<ActionRespons
 
     console.log('apiKey', apiKey);
     
-    await fetch('http://localhost:8080/accounts', {
+    // http://localhost:8080/accounts
+    const response = await fetch('https://upgraded-system-69944xrgg55vcwj6-8080.app.github.dev/accounts', {
       method: 'GET',
       headers: {
         'X-API-KEY': apiKey
       }
-    })
-    .then(response => {
-      console.log('response', response.statusText);
-      if (!response.ok) {
-        console.error('Erro ao buscar contas:', response.statusText)
-        return {
-          success: false,
-          message: 'Erro ao fazer login.'
-        }
-      } else {
-        console.log('Login realizado com sucesso', response.statusText);
-        // Para este exemplo, apenas redirecionamos para a página de faturas
-        redirect('/invoices');
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao buscar contas:', error)
+    });
+
+    if (!response.ok) {
+      console.error('Erro ao autenticar com a API externa:', response.statusText);
+      // Se a autenticação falhar, você pode retornar uma mensagem de erro
       return {
         success: false,
         message: 'Erro ao fazer login.'
       }
-    })
-
-    // Para este exemplo, apenas redirecionamos para a página de faturas
-    // redirect('/invoices')
+    }
+    
+    // Neste exemplo, vamos redirecionar para a página de faturas
+    redirect('/invoices');
   }
 
   // Se chegou até aqui, significa que a autenticação falhou
@@ -68,4 +57,4 @@ export async function loginWithApiKey(formData: FormData): Promise<ActionRespons
     success: false,
     message: 'API Key inválida. A chave deve ter pelo menos 6 caracteres.'
   }
-} 
+}

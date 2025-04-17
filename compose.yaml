@@ -1,50 +1,75 @@
 services:
+  devcontainer:
+    image: devcontainers/cli:latest
+    container_name: devcontainer
+    restart: unless-stopped
+    volumes:
+      - ./next-frontend:/usr/src/app
+      - ./go-gateway-api:/usr/src/app/go-gateway-api
+    command: sleep infinity
   frontend:
     build:
       context: ./next-frontend
       dockerfile: Dockerfile.dev
     environment:
-      - NODE_ENV=${FRONTEND_NODE_ENV}
-      - PORT=${FRONTEND_HTTP_PORT}
+      - NODE_ENV=${FRONTEND_NODE_ENV:-development}
+      - PORT=${FRONTEND_HTTP_PORT:-3000}
     ports:
-      - 3000:3000
+      - "3000:3000"
     volumes:
       - ./next-frontend:/usr/src/app
-    command: sleep infinity
+      - /usr/src/app/node_modules
+    depends_on:
+      - gateway
+    networks:
+      - app-network
+
   gateway:
     build:
       context: ./go-gateway-api
-      target: final
+      dockerfile: Dockerfile.dev
     environment:
-      - HTTP_PORT
-      - DB_HOST
-      - DB_PORT
-      - DB_USER
-      - DB_PASSWORD
-      - DB_NAME
-      - DB_SSLMODE
+      - HTTP_PORT=${HTTP_PORT:-8080}
+      - DB_HOST=${DB_HOST:-gateway-db}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-gateway}
+      - DB_SSLMODE=${DB_SSLMODE:-disable}
     ports:
-      - 8080:8080
+      - "8080:8080"
+    volumes:
+      - ./go-gateway-api:/usr/src/app
+      - /go/pkg/mod
     depends_on:
       gateway-db:
         condition: service_healthy
-    command: sh -c "/bin/migrate && /bin/server"
+    networks:
+      - app-network
+
   gateway-db:
-    image: ${DB_IMAGE}
-    container_name: "${DB_HOST}"
+    image: postgres:16-alpine
+    container_name: "${DB_HOST:-gateway-db}"
     restart: unless-stopped
     volumes:
       - gateway-db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    expose:
-      - 5432
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-gateway}
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
 volumes:
   gateway-db-data:
