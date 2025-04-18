@@ -1,15 +1,8 @@
 {
-<<<<<<< HEAD
     "name": "Gateway de Pagamentos",
     "image": "mcr.microsoft.com/devcontainers/base:latest",
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-=======
-    "name": "Gateway de Pagamentos - Config",
-    "dockerComposeFile": "../compose.yaml",
-    "service": "devcontainer",
-    "workspaceFolder": "/usr/src/app",
->>>>>>> 618c8d1483faf5d3d35f6cba700d63c7ea541e50
     "customizations": {
         "vscode": {
             "extensions": [
@@ -19,13 +12,11 @@
             ]
         }
     },
-<<<<<<< HEAD
     "features": {
         "ghcr.io/devcontainers/features/go:1": {},
         "ghcr.io/devcontainers/features/node:1": {}
     },
     "forwardPorts": [3000, 8080],
-    "remoteUser": "root",
     "containerEnv": {
         "NODE_ENV": "development",
         "FRONTEND_PORT": "3000",
@@ -39,8 +30,6 @@
         "DB_PASSWORD": "postgres",
         "DB_NAME": "gateway",
         "DB_SSLMODE": "disable"
-    }
-=======
+    },
     "remoteUser": "root"
->>>>>>> 618c8d1483faf5d3d35f6cba700d63c7ea541e50
 }
