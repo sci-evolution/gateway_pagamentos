@@ -1,26 +1,16 @@
 {
-    "name": "Gateway de Pagamentos",
+    "name": "Gateway de Pagamentos - Config",
     "dockerComposeFile": "../compose.yaml",
     "service": "devcontainer",
     "workspaceFolder": "/usr/src/app",
     "customizations": {
         "vscode": {
             "extensions": [
-                "dbaeumer.vscode-eslint",
-                "prettier.prettier-vscode",
-                "bradlc.vscode-tailwindcss",
                 "ms-azuretools.vscode-docker",
-                "golang.go"
+                "redhat.vscode-yaml",
+                "mikestead.dotenv"
             ]
         }
     },
-    "features": {
-        "ghcr.io/devcontainers/features/go:1": {},
-        "ghcr.io/devcontainers/features/node:1": {}
-    },
-    "mounts": [
-        "source=${localWorkspaceFolder}/next-frontend,target=/usr/src/app/next-frontend,type=bind",
-        "source=${localWorkspaceFolder}/go-gateway-api,target=/usr/src/app/go-gateway-api,type=bind"
-    ],
     "remoteUser": "root"
 }

@@ -1,0 +1,17 @@
+{
+    "name": "Frontend Service",
+    "dockerComposeFile": ["../../compose.yaml"],
+    "service": "frontend",
+    "workspaceFolder": "/usr/src/app/next-frontend",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "prettier.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+    "remoteUser": "node"
+}
