@@ -15,10 +15,7 @@
     "features": {
         "ghcr.io/devcontainers/features/go:1": {},
         "ghcr.io/devcontainers/features/node:1": {},
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-        "ghcr.io/devcontainers/features/kubectl:1": {},
-        "ghcr.io/devcontainers/features/helm:1": {},
-        "ghcr.io/devcontainers/features/kind:1": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
     "forwardPorts": [3000, 8080],
     "containerEnv": {
