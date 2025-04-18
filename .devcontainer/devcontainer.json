@@ -1,8 +1,8 @@
 {
     "name": "Gateway de Pagamentos",
-    "dockerComposeFile": "../compose.yaml",
-    "service": "devcontainer",
-    "workspaceFolder": "/usr/src/app",
+    "image": "mcr.microsoft.com/devcontainers/base:latest",
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -18,9 +18,20 @@
         "ghcr.io/devcontainers/features/go:1": {},
         "ghcr.io/devcontainers/features/node:1": {}
     },
-    "mounts": [
-        "source=${localWorkspaceFolder}/next-frontend,target=/usr/src/app/next-frontend,type=bind",
-        "source=${localWorkspaceFolder}/go-gateway-api,target=/usr/src/app/go-gateway-api,type=bind"
-    ],
-    "remoteUser": "root"
+    "forwardPorts": [3000, 8080],
+    "remoteUser": "root",
+    "containerEnv": {
+        "NODE_ENV": "development",
+        "FRONTEND_PORT": "3000",
+        "API_URL": "http://localhost:8080",
+        "HTTP_PORT": "8080",
+        "GO_ENV": "development",
+        "JWT_SECRET": "your-secret-key-here",
+        "DB_HOST": "localhost",
+        "DB_PORT": "5432",
+        "DB_USER": "postgres",
+        "DB_PASSWORD": "postgres",
+        "DB_NAME": "gateway",
+        "DB_SSLMODE": "disable"
+    }
 }
