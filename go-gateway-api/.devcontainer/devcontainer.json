@@ -1,0 +1,15 @@
+{
+    "name": "Gateway API Service",
+    "dockerComposeFile": ["../../compose.yaml"],
+    "service": "gateway",
+    "workspaceFolder": "/usr/src/app/go-gateway-api",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+    "remoteUser": "root"
+}
