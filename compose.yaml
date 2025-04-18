@@ -1,11 +1,15 @@
 services:
   devcontainer:
-    image: devcontainers/cli:latest
+    image: mcr.microsoft.com/devcontainers/base:latest
     container_name: devcontainer
     restart: unless-stopped
+    group_add:
+      - ${DOCKER_GROUP_ID:-999}
     volumes:
-      - ./next-frontend:/usr/src/app
-      - ./go-gateway-api:/usr/src/app/go-gateway-api
+      - .:/usr/src/app
+      - /usr/src/app/next-frontend/node_modules
+      - /usr/src/app/go-gateway-api/go/pkg/mod
+      - /var/run/docker.sock:/var/run/docker.sock
     command: sleep infinity
   frontend:
     build:
