@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-api
+  labels:
+    app: gateway-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-api
+  template:
+    metadata:
+      labels:
+        app: gateway-api
+    spec:
+      initContainers:
+        - name: wait-for-postgre
+          image: busybox
+          command: ["sh", "-c", "until nc -z postgre 5432; do echo waiting for postgre; sleep 5; done;"]
+      containers:
+      - name: gateway-api
+        image: gateway-api:dev
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_HOST
+            value: postgre
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: gateway-db-usr
+          - name: DB_PASSWORD
+            value: gateway-db-pass
+          - name: DB_NAME
+            value: gateway-db
+          - name: DB_SSLMODE
+            value: disable
+          - name: HTTP_PORT
+            value: "8080"
+        volumeMounts:
+        - name: source-code
+          mountPath: /usr/src/app
+      volumes:
+      - name: source-code
+        hostPath:
+          path: /workspace/go-gateway-api
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: gateway-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

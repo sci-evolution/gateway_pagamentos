@@ -31,8 +31,8 @@ X-API-Key: {{accountApiKey}}
 Content-Type: {{contentType}}
 
 {
-    "amount": 100,
-    "description": "Bandeja de ovos 5",
+    "amount": 10000,
+    "description": "Bandeja de ovos 3",
     "payment_type": "credit_card",
     "card_number": "1234567890123456",
     "cvv": "123",

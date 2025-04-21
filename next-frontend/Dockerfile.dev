@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1
+
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Dockerfile reference guide at
+# https://docs.docker.com/go/dockerfile-reference/
+
+# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
+
+ARG NODE_VERSION=22
+
+FROM mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}-bookworm
+
+# Set development environment
+ENV NODE_ENV=development
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# For development containers, it's often more convenient to run as root
+# to avoid permission issues. For production, use a non-root user.
+# USER node
+
+# Expose Next.js development port
+EXPOSE 3000
+
+# Command will be provided by docker-compose
+CMD ["npm", "run", "dev"]
