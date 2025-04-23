@@ -1,16 +1,46 @@
 # For more information, see https://kind.sigs.k8s.io/
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
+name: gateway-pagamentos-dev
 nodes:
 - role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "workload=gateway"
   extraMounts:
   - hostPath: /workspace/go-gateway-api
     containerPath: /workspace/go-gateway-api
 - role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "workload=frontend"
   extraMounts:
-  - hostPath: /workspace/go-gateway-api
-    containerPath: /workspace/go-gateway-api
+  - hostPath: /workspace/next-frontend
+    containerPath: /workspace/next-frontend
 - role: worker
-  extraMounts:
-  - hostPath: /workspace/go-gateway-api
-    containerPath: /workspace/go-gateway-api
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "workload=database"
