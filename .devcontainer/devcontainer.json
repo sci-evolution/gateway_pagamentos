@@ -17,14 +17,12 @@
         "ghcr.io/devcontainers/features/node:1": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
-    "forwardPorts": [3000, 8080],
     "containerEnv": {
         "NODE_ENV": "development",
         "FRONTEND_PORT": "3000",
         "API_URL": "http://localhost:8080",
-        "HTTP_PORT": "8080",
+        "GATEWAY_API_PORT": "8080",
         "GO_ENV": "development",
-        "JWT_SECRET": "your-secret-key-here",
         "DB_HOST": "localhost",
         "DB_PORT": "5432",
         "DB_USER": "postgres",

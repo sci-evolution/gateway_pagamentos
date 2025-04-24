@@ -26,6 +26,9 @@ RUN npm install
 # to avoid permission issues. For production, use a non-root user.
 # USER node
 
+# Copy the rest of the application code
+COPY . .
+
 # Expose Next.js development port
 EXPOSE 3000
 
