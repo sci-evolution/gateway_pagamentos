@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 
-# Build stage
-FROM golang:1.24-alpine AS builder
+# Build stage - common base
+FROM golang:1.24-alpine AS base
+WORKDIR /app
 
 # Set necessary environment variables for Go
 ENV GO111MODULE=on \
@@ -9,45 +10,47 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
-# Set working directory
-WORKDIR /build
-
 # Install necessary build tools
 RUN apk add --no-cache git
 
-# Copy go mod and sum files
+# Copy go mod and sum files for dependency caching
 COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
-# Download dependencies
-RUN go mod download
+# Development stage
+FROM base AS development
+# Install Air for live-reloading during development
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go install github.com/air-verse/air@latest
+
+# Initialize Air config and modify it for correct build command
+RUN air init && \
+    sed -i 's#cmd = "go build -o ./tmp/main ."#cmd = "go build -o ./tmp/main ./cmd/app"#' .air.toml
 
 # Copy source code
 COPY . .
+EXPOSE 8080
+CMD ["air"]
 
-# Build the application
-RUN go build -o main ./cmd/app/main.go
+# Build stage
+FROM base AS builder
+COPY . .
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    go build -o /app/main ./cmd/app/main.go
 
-# Final stage
-FROM alpine:3.21
-
-# Add non root user
-RUN adduser -D -g '' appuser
-
-# Add CA certificates
-RUN apk add --no-cache ca-certificates
-
-# Set working directory
+# Production stage - using minimal scratch image
+FROM alpine:3.19 AS production
 WORKDIR /app
 
-# Copy the binary from builder
-COPY --from=builder /build/main .
-COPY --from=builder /build/migrations ./migrations
+# Add CA certificates and create non-root user
+RUN apk add --no-cache ca-certificates && \
+    adduser -D -g '' appuser
 
-# Use non root user
+# Copy only the built binary from builder stage
+COPY --from=builder /app/main .
+
+# Use non-root user
 USER appuser
-
-# Expose API port
 EXPOSE 8080
-
-# Command to run the application
 CMD ["./main"]
