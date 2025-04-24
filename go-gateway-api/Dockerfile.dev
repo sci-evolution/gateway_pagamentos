@@ -11,8 +11,7 @@ ENV GO_ENV=development
 WORKDIR /usr/src/app
 
 # Install Air for live-reloading during development
-RUN go install github.com/air-verse/air@latest \
-    && air init
+RUN go install github.com/air-verse/air@latest
 
 # Copy go.mod and go.sum files
 COPY go.mod go.sum ./

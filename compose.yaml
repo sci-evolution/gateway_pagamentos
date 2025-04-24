@@ -1,0 +1,74 @@
+services:
+  gateway-frontend:
+    build:
+      context: ./next-frontend
+      dockerfile: Dockerfile.dev
+    container_name: ${GATEWAY_FRONTEND_HOST:-gateway-frontend}
+    restart: unless-stopped
+    environment:
+      HOST: ${GATEWAY_FRONTEND_HOST:-gateway-frontend}
+      PORT: ${GATEWAY_FRONTEND_PORT:-3000}
+      GATEWAY_API_URL: ${GATEWAY_API_HOST:-gateway-api}:${GATEWAY_API_PORT:-8080}
+    ports:
+      - ${GATEWAY_FRONTEND_PORT:-3000}:3000
+    volumes:
+      - ./next-frontend:/usr/src/app/next-frontend
+      - /usr/src/app/next-frontend/node_modules
+    depends_on:
+      - gateway-api
+    networks:
+      - app-network
+
+  gateway-api:
+    build:
+      context: ./go-gateway-api
+      dockerfile: Dockerfile.dev
+    container_name: ${GATEWAY_API_NAME:-gateway-api}
+    restart: unless-stopped
+    environment:
+      HTTP_PORT: ${GATEWAY_API_PORT:-8080}
+
+      # Database connection settings
+      DB_HOST: ${DB_HOST_GATEWAY:-gateway-db}
+      DB_PORT: ${DB_PORT_GATEWAY:-5432}
+      DB_USER: ${DB_USER_GATEWAY:-gateway-db-usr}
+      DB_PASSWORD: ${DB_PASSWORD_GATEWAY:-gateway-db-pass}
+      DB_NAME: ${DB_NAME_GATEWAY:-gateway-db}
+      DB_SSLMODE: ${DB_SSLMODE_GATEWAY:-disable}
+    ports:
+      - ${GATEWAY_API_PORT:-8080}:8080
+    volumes:
+      - ./go-gateway-api:/usr/src/app/go-gateway-api
+      - /go/pkg/mod
+    depends_on:
+      gateway-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  gateway-db:
+    image: ${DB_IMAGE_GATEWAY:-postgres:latest}
+    container_name: ${DB_HOST_GATEWAY:-gateway-db}
+    restart: unless-stopped
+    volumes:
+      - gateway-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER_GATEWAY:-gateway-db-usr}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_GATEWAY:-gateway-db-pass}
+      POSTGRES_DB: ${DB_NAME_GATEWAY:-gateway-db}
+    ports:
+      - ${DB_PORT_GATEWAY:-5432}:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER_GATEWAY:-gateway-db-usr}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  gateway-db-data:

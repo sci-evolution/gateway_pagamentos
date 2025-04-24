@@ -1,7 +1,9 @@
 'use server'
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation"
+import { redirect } from "next/navigation";
+
+const gatewayApiUrl = process.env.GATEWAY_API_URL;
 
 // Define the response type for clarity
 export type ActionResponse = {
@@ -32,7 +34,7 @@ export async function loginWithApiKey(formData: FormData): Promise<ActionRespons
     console.log('apiKey', apiKey);
     
     // http://localhost:8080/accounts
-    const response = await fetch('https://upgraded-system-69944xrgg55vcwj6-8080.app.github.dev/accounts', {
+    const response = await fetch(`${gatewayApiUrl}/accounts`, {
       method: 'GET',
       headers: {
         'X-API-KEY': apiKey
