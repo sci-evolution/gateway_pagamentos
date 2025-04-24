@@ -1,67 +1,69 @@
 services:
-  gateway-frontend:
+  pagamentos-frontend:
     build:
       context: ../next-frontend
       dockerfile: Dockerfile
       target: development
-    container_name: ${GATEWAY_FRONTEND_HOST:-gateway-frontend}
+    image: ${PAGAMENTOS_FRONTEND_IMAGE:-pagamentos-frontend}:dev
+    container_name: ${PAGAMENTOS_FRONTEND_HOST:-pagamentos-frontend}
     restart: unless-stopped
     environment:
-      HOST: ${GATEWAY_FRONTEND_HOST:-gateway-frontend}
-      PORT: ${GATEWAY_FRONTEND_PORT:-3000}
-      GATEWAY_API_URL: ${GATEWAY_API_HOST:-gateway-api}:${GATEWAY_API_PORT:-8080}
+      HOST: ${PAGAMENTOS_FRONTEND_HOST:-pagamentos-frontend}
+      PORT: ${PAGAMENTOS_FRONTEND_PORT:-3000}
+      GATEWAY_API_URL: ${PAGAMENTOS_GATEWAY_HOST:-pagamentos-gateway}:${PAGAMENTOS_GATEWAY_PORT:-8080}
     ports:
-      - ${GATEWAY_FRONTEND_PORT:-3000}:3000
+      - ${PAGAMENTOS_FRONTEND_PORT:-3000}:3000
     volumes:
       - ../next-frontend:/app/next-frontend
       - /app/next-frontend/node_modules
     depends_on:
-      - gateway-api
+      - pagamentos-gateway
     networks:
       - app-network
 
-  gateway-api:
+  pagamentos-gateway:
     build:
       context: ../go-gateway-api
       dockerfile: Dockerfile
       target: development
-    container_name: ${GATEWAY_API_NAME:-gateway-api}
+    image: ${PAGAMENTOS_GATEWAY_IMAGE:-pagamentos-gateway}:dev
+    container_name: ${GATEWAY_API_NAME:-pagamentos-gateway}
     restart: unless-stopped
     environment:
-      HTTP_PORT: ${GATEWAY_API_PORT:-8080}
+      HTTP_PORT: ${PAGAMENTOS_GATEWAY_PORT:-8080}
 
       # Database connection settings
-      DB_HOST: ${DB_HOST_GATEWAY:-gateway-db}
-      DB_PORT: ${DB_PORT_GATEWAY:-5432}
-      DB_USER: ${DB_USER_GATEWAY:-gateway-db-usr}
-      DB_PASSWORD: ${DB_PASSWORD_GATEWAY:-gateway-db-pass}
-      DB_NAME: ${DB_NAME_GATEWAY:-gateway-db}
-      DB_SSLMODE: ${DB_SSLMODE_GATEWAY:-disable}
+      DB_HOST: ${PAGAMENTOS_DB_HOST:-pagamentos-db}
+      DB_PORT: ${PAGAMENTOS_DB_PORT:-5432}
+      DB_USER: ${PAGAMENTOS_DB_USER:-pagamentos-db-usr}
+      DB_PASSWORD: ${PAGAMENTOS_DB_PASS:-pagamentos-db-pass}
+      DB_NAME: ${PAGAMENTOS_DB_NAME:-pagamentos-db}
+      DB_SSLMODE: ${PAGAMENTOS_DB_SSLMODE:-disable}
     ports:
-      - ${GATEWAY_API_PORT:-8080}:8080
+      - ${PAGAMENTOS_GATEWAY_PORT:-8080}:8080
     volumes:
       - ../go-gateway-api:/app/go-gateway-api
       - /go/pkg/mod
     depends_on:
-      gateway-db:
+      pagamentos-db:
         condition: service_healthy
     networks:
       - app-network
 
-  gateway-db:
-    image: ${DB_IMAGE_GATEWAY:-postgres:latest}
-    container_name: ${DB_HOST_GATEWAY:-gateway-db}
+  pagamentos-db:
+    image: ${PAGAMENTOS_DB_iMAGE:-postgres:latest}
+    container_name: ${PAGAMENTOS_DB_HOST:-pagamentos-db}
     restart: unless-stopped
     volumes:
-      - gateway-db-data:/var/lib/postgresql/data
+      - pagamentos-db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${DB_USER_GATEWAY:-gateway-db-usr}
-      POSTGRES_PASSWORD: ${DB_PASSWORD_GATEWAY:-gateway-db-pass}
-      POSTGRES_DB: ${DB_NAME_GATEWAY:-gateway-db}
+      POSTGRES_USER: ${PAGAMENTOS_DB_USER:-pagamentos-db-usr}
+      POSTGRES_PASSWORD: ${PAGAMENTOS_DB_PASS:-pagamentos-db-pass}
+      POSTGRES_DB: ${PAGAMENTOS_DB_NAME:-pagamentos-db}
     ports:
-      - ${DB_PORT_GATEWAY:-5432}:5432
+      - ${PAGAMENTOS_DB_PORT:-5432}:5432
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER_GATEWAY:-gateway-db-usr}"]
+      test: ["CMD", "pg_isready", "-U", "${PAGAMENTOS_DB_USER:-pagamentos-db-usr}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -73,4 +75,4 @@ networks:
     driver: bridge
 
 volumes:
-  gateway-db-data:
+  pagamentos-db-data:
