@@ -13,7 +13,7 @@ Content-Type: {{contentType}}
 
 {
     "name": "John Doe",
-    "email": "john@example_3.com"
+    "email": "john@example_1.com"
 }
 
 ### Buscar conta por API Key
@@ -31,8 +31,8 @@ X-API-Key: {{accountApiKey}}
 Content-Type: {{contentType}}
 
 {
-    "amount": 10000,
-    "description": "Bandeja de ovos 3",
+    "amount": 100000,
+    "description": "3 Pacote de Café 250g",
     "payment_type": "credit_card",
     "card_number": "1234567890123456",
     "cvv": "123",
