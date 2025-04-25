@@ -27,7 +27,7 @@ go.work.sum
 go-gateway-api/tmp/
 
 # Environment variables
-.env
+# .env
 .env.local
 .env.*.local
 
