@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 ENV NODE_ENV=development
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev:public"]
 
 # Build stage
 FROM base AS builder
@@ -43,4 +43,4 @@ COPY --from=builder /app/public ./public
 # Switch to non-root user
 USER nextjs
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:public"]
