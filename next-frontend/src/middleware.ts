@@ -58,7 +58,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Para outras requisições, definir os cabeçalhos CORS se a origem for permitida
-  let response = NextResponse.next();
+  const response = NextResponse.next();
   if (origin && allowedOrigins.includes(origin)) {
     response.headers.set('Access-Control-Allow-Origin', origin);
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
