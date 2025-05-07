@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/domain"
@@ -20,14 +20,16 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.Header.Get("X-API-Key")
 		if apiKey == "" {
-			fmt.Println("No API key provided")
+			log.Println("No API key provided in request")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		_, err := m.accountService.FindByAPIKey(apiKey)
+		log.Printf("Authenticating request with API Key: %s", apiKey)
+		account, err := m.accountService.FindByAPIKey(apiKey)
+
 		if err != nil {
-			fmt.Println("Error on find account", err)
+			log.Printf("Error authenticating account: %v", err)
 			if err == domain.ErrAccountNotFound {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
@@ -37,6 +39,7 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
+		log.Printf("Successfully authenticated account: %s", account.ID)
 		next.ServeHTTP(w, r)
 	})
 }

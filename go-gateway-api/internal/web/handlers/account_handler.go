@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/dto"
@@ -23,7 +23,7 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&input)
 
 	if err != nil {
-		fmt.Println("error decoding request body", err)
+		log.Printf("error decoding request body: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -31,7 +31,7 @@ func (h *AccountHandler) Create(w http.ResponseWriter, r *http.Request) {
 	output, err := h.accountService.CreateAccount(input)
 
 	if err != nil {
-		fmt.Println("error creating account", err)
+		log.Printf("error creating account: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -45,13 +45,17 @@ func (h *AccountHandler) Get(w http.ResponseWriter, r *http.Request) {
 	apiKey := r.Header.Get("X-API-Key")
 
 	if apiKey == "" {
+		log.Println("API Key is required")
 		http.Error(w, "API Key is required", http.StatusUnauthorized)
 		return
 	}
 
+	log.Printf("Processing request with API Key: %s", apiKey)
+
 	output, err := h.accountService.FindByAPIKey(apiKey)
 
 	if err != nil {
+		log.Printf("Error finding account: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

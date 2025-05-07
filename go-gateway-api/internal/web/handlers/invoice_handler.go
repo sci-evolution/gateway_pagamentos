@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -89,6 +90,8 @@ func (h *InvoiceHandler) ListByAccount(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "API Key is required", http.StatusUnauthorized)
 		return
 	}
+
+	fmt.Println("API Key:", apiKey) // Debugging line
 
 	output, err := h.service.ListByAccountAPIKey(apiKey)
 	if err != nil {

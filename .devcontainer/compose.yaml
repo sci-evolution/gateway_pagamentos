@@ -12,8 +12,12 @@ services:
       PORT: ${PAGAMENTOS_FRONTEND_PORT}
       ALLOWED_ORIGINS: ${PAGAMENTOS_FRONTEND_ALLOWED_ORIGINS}
       PAGAMENTOS_GATEWAY_URL: ${PAGAMENTOS_GATEWAY_HOST}:${PAGAMENTOS_GATEWAY_PORT}
+      # NODE_OPTIONS: --inspect=0.0.0.0:9229
+      # NODE_ENV: development
+      # DEBUG: "*"
     ports:
       - ${PAGAMENTOS_FRONTEND_PORT}:3000
+      # - 9229:9229
     volumes:
       - ../next-frontend:/app/next-frontend
       - /app/next-frontend/node_modules

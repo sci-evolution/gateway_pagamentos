@@ -1,9 +1,11 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/service"
 	"github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/web/handlers"
 	authMiddleware "github.com/wellington-evolution/gateway_pagamentos/go-gateway-api/internal/web/middleware"
@@ -27,6 +29,11 @@ func NewServer(accountService *service.AccountService, invoiceService *service.I
 }
 
 func (s *Server) ConfigureRoutes() {
+	// Add middleware
+	s.router.Use(middleware.Logger)
+	s.router.Use(middleware.Recoverer)
+	s.router.Use(middleware.RequestID)
+
 	authMiddleware := authMiddleware.NewAuthMiddleware(s.accountService)
 	accountHandler := handlers.NewAccountHandler(s.accountService)
 	invoiceHandler := handlers.NewInvoiceHandler(s.invoiceService)
@@ -45,7 +52,7 @@ func (s *Server) ConfigureRoutes() {
 }
 
 func (s *Server) Start() error {
-	s.ConfigureRoutes()
+	log.Printf("Starting server on port %s", s.port)
 
 	s.server = &http.Server{
 		Addr:    ":" + s.port,

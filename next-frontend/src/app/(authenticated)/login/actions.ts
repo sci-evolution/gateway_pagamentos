@@ -31,26 +31,37 @@ export async function loginWithApiKey(formData: FormData): Promise<ActionRespons
     const cookieStore = await cookies();
     cookieStore.set('apiKey', apiKey as string);
 
-    console.log('apiKey', apiKey);
-    
-    const response = await fetch(`${pagamentosGatewayURL}/accounts`, {
+    // Aqui você pode fazer uma chamada para a API externa para validar a chave
+    const response = await fetch(`http://${pagamentosGatewayURL}/accounts`, {
       method: 'GET',
       headers: {
         'X-API-KEY': apiKey
       }
-    });
-
-    if (!response.ok) {
-      console.error('Erro ao autenticar com a API externa:', response.statusText);
-      // Se a autenticação falhar, você pode retornar uma mensagem de erro
+    })
+    .then((res) => {
+      if (!res.ok) {
+        console.error('Erro ao autenticar com a API externa:', res.statusText);
+        return {
+          success: false,
+          message: 'Erro ao fazer login.'
+        }
+      }
+   
+      return res.json();
+    })
+    .catch((error) => {
+      console.error('Erro ao acessar o serviço:', error);
       return {
         success: false,
-        message: 'Erro ao fazer login.'
+        message: 'Erro ao acessar o serviço.'
       }
+    });
+
+    // Se a resposta for bem-sucedida, redireciona para a página de faturas
+    if (response) {
+      console.log('Login bem-sucedido');
+      redirect('/invoices');
     }
-    
-    // Neste exemplo, vamos redirecionar para a página de faturas
-    redirect('/invoices');
   }
 
   // Se chegou até aqui, significa que a autenticação falhou
@@ -58,4 +69,4 @@ export async function loginWithApiKey(formData: FormData): Promise<ActionRespons
     success: false,
     message: 'API Key inválida. A chave deve ter pelo menos 6 caracteres.'
   }
-}
+};
